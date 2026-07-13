@@ -1,0 +1,43 @@
+<html><head>LOGIN FORM<head>
+
+    <body>
+        <div>
+            <form id="loginForm">
+                <label>Email:<label>
+                    <input id="Email" type="Email" placeholder="Enter your email" >
+                    <br><br>
+                    <label>Password:<label>
+                    <input id="password" type="password" placeholder="Enter your password"  >
+                    <br><br>
+                    <button type="submit" placeholder="Submit">login</button>
+                    </form>
+                    <p id="error" style="color: red;"></p>
+
+        </div>  
+        <script>
+            const Email=document.getElementById("Email");
+            const password=document.getElementById("password");
+            const error=document.getElementById("error");
+            const form=document.getElementById("loginForm");
+            form.addEventListener("submit", function(event) {
+      event.preventDefault();
+            if(Email.value===""){
+                error.textContent="Email is required";
+                return;
+            }
+             if (password.value === "") {
+        error.textContent = "Password is required";
+        return;
+      }
+      if (password.value.length < 6) {
+        error.textContent = "Password must be at least 6 characters";
+        return;
+      }
+
+      error.textContent = "";
+      alert("Login successful");
+    });
+        </script>
+    </body>
+
+  </head></html>

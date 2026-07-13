@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form Practice</title>
+</head>
+<body>
+    <form id="form">
+
+         <label> Email: </label> <input type="email" id="Email" placeholder="Enter Email">
+        <br>
+       <label>Password:</label><input type="password" id="password" placeholder="Enter Password">
+        <br>
+        <button type="submit">Login</button>
+    </form>
+    <p style="color: red;" id="errMsg"></p>
+</body>
+
+<script>
+    const email=document.getElementById("Email");
+    const password=document.getElementById("password");
+    const err=document.getElementById("errMsg");
+    const form=document.getElementById("form");
+
+    form.addEventListener("submit",function (event){
+        event.preventDefault();
+        if(email.value===""){
+            err.textContent="Email is Required";
+            return;
+        }
+        if(password.value===""){
+            err.textContent="Password is required";
+            return;
+        }
+        if(password.value.length<6){
+            err.textContent="Password length should be greater than 6";
+            return;
+        }
+    
+    });
+</script>
+</html>
