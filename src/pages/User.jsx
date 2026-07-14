@@ -57,7 +57,7 @@ function Users() {
     ...params.filters,
   };
 
-  const { data, isLoading, isFetching, error, refetch } = useUsers();
+  const { data, isLoading, isFetching, error, refetch } = useUsers(queryParams);
   console.log("API DATA:", data);
   console.log("QUERY PARAMS:", queryParams);
   console.log("DATA:", data);
@@ -89,7 +89,10 @@ function Users() {
     <>
       <div
         className="
-    min-h-screen
+    flex
+    h-full
+    min-h-0
+    flex-col
     bg-gray-50
     dark:bg-gray-950
     p-6
@@ -117,11 +120,15 @@ function Users() {
             Manage and browse all employee records.
           </p>
         </div>
+        {console.log("URL COLUMNS:", params.columns)}
 
         <DataTable
           columns={columns}
-          data={data?.users ?? []}
-          total={data?.total ?? 0}
+          columnVisibilityFromUrl={params.columns}
+          onColumnVisibilityChange={params.setColumns}
+          columns={columns}
+          data={data?.data ?? []}
+          total={data?.items ?? 0}
           isLoading={isLoading}
           isFetching={isFetching}
           error={error}

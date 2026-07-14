@@ -1,16 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../services/userService";
 
-export function useUsers() {
+export function useUsers(params) {
   return useQuery({
-    queryKey: ["users"],
+    queryKey: ["users", params],
     queryFn: async () => {
-      const users = await getUsers();
+      const data = await getUsers(params);
 
-      return {
-        users,
-        total: users.length,
-      };
+      return data;
     },
   });
 }

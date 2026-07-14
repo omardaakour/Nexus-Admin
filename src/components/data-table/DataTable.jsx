@@ -1,11 +1,10 @@
 import React from "react";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import {
   flexRender,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  getPaginationRowModel,
   getExpandedRowModel,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -34,6 +33,13 @@ const ROW_HEIGHT = 45;
 // page's worth of rows in memory at once.
 function DataTable({
   columns,
+  columnVisibilityFromUrl,
+
+  onColumnVisibilityChange,
+  page,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
   data,
   total,
   isLoading,
@@ -63,13 +69,27 @@ function DataTable({
   setEditingUser,
 }) {
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [expanded, setExpanded] = useState({});
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 20,
-  });
+  const initialColumnVisibility = useMemo(() => {
+    if (!columnVisibilityFromUrl) return {};
 
+    const hidden = columnVisibilityFromUrl.split(",");
+
+    return hidden.reduce((acc, column) => {
+      acc[column] = false;
+      return acc;
+    }, {});
+  }, [columnVisibilityFromUrl]);
+
+  const [columnVisibility, setColumnVisibility] = useState({});
+
+  useEffect(() => {
+    setColumnVisibility(initialColumnVisibility);
+  }, [initialColumnVisibility]);
+  const [expanded, setExpanded] = useState({});
+  const pagination = {
+    pageIndex: page - 1,
+    pageSize,
+  };
   const scrollRef = useRef(null);
   const fuzzyFilter = (row, columnId, value) => {
     return rankItem(String(row.getValue(columnId) ?? ""), value).passed;
@@ -118,7 +138,7 @@ function DataTable({
         ),
       },
 
-      ...columns,
+      ...(columns ?? []),
     ],
     [columns],
   );
@@ -168,8 +188,13 @@ function DataTable({
     },
     onExpandedChange: setExpanded,
     getExpandedRowModel: getExpandedRowModel(),
-    getCoreRowModel: getCoreRowModel(),
+    onPaginationChange: (updater) => {
+      const next =
+        typeof updater === "function" ? updater(pagination) : updater;
 
+      onPageChange(next.pageIndex + 1);
+      onPageSizeChange(next.pageSize);
+    },
     getRowId,
 
     onGlobalFilterChange: onSearchChange,
@@ -181,7 +206,20 @@ function DataTable({
     },
 
     onRowSelectionChange: setRowSelection,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange: (updater) => {
+      setColumnVisibility((old) => {
+        const next = typeof updater === "function" ? updater(old) : updater;
+
+        const hiddenColumns = Object.entries(next)
+          .filter(([_, visible]) => visible === false)
+          .map(([id]) => id)
+          .join(",");
+
+        onColumnVisibilityChange(hiddenColumns);
+
+        return next;
+      });
+    },
     onExpandedChange: setExpanded,
     getCoreRowModel: getCoreRowModel(),
 
@@ -192,10 +230,8 @@ function DataTable({
     // sorting
     getSortedRowModel: getSortedRowModel(),
 
-    // pagination
-    getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    onPaginationChange: setPagination,
+    manualPagination: true,
+    pageCount: Math.ceil(total / pagination.pageSize),
   });
 
   const { rows } = table.getRowModel();
@@ -228,7 +264,11 @@ function DataTable({
   return (
     <div
       className="
-    overflow-hidden
+    flex
+    h-full
+    min-h-0
+    flex-col
+    overflow-hidden 
     rounded-xl
     border
     border-gray-200
@@ -249,7 +289,6 @@ function DataTable({
         isRefreshing={isFetching}
         onExportAll={onExportAll}
       />
-
       {showFilters && (
         <DataTableFilters
           filters={filters}
@@ -257,7 +296,6 @@ function DataTable({
           onClear={onClearFilters}
         />
       )}
-
       <DataTableBulkActions
         count={selectedRowIds.length}
         onClear={clearSelection}
@@ -265,7 +303,6 @@ function DataTable({
         onDelete={() => onDeleteRows(selectedRowIds).then(clearSelection)}
         isDeleting={isDeleting}
       />
-
       {isLoading ? (
         <TableSkeleton columnCount={tableColumns.length} />
       ) : error ? (
@@ -281,8 +318,8 @@ function DataTable({
         // means the DOM only ever renders ~15-20 <tr> elements at a time no
         // matter how large the page size is, so scrolling stays smooth even
         // at 500 rows/page without ever holding 10,000+ rows in memory.
-        <div ref={scrollRef} className="max-h-[600px] overflow-auto">
-          <table className="w-full border-collapse text-left text-sm">
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-auto">
+          <table className="min-w-max border-collapse text-left text-sm">
             <thead
               className="
     sticky
@@ -404,7 +441,6 @@ function DataTable({
                                   Email
                                 </p>
                                 <p className="font-medium text-gray-900 dark:text-white">
-                                  {" "}
                                   {row.original.email}
                                 </p>
                               </div>
@@ -414,7 +450,6 @@ function DataTable({
                                   Phone
                                 </p>
                                 <p className="font-medium text-gray-900 dark:text-white">
-                                  {" "}
                                   {row.original.phone}
                                 </p>
                               </div>
@@ -424,7 +459,6 @@ function DataTable({
                                   Department
                                 </p>
                                 <p className="font-medium text-gray-900 dark:text-white">
-                                  {" "}
                                   {row.original.department}
                                 </p>
                               </div>
@@ -434,7 +468,6 @@ function DataTable({
                                   Salary
                                 </p>
                                 <p className="font-medium text-gray-900 dark:text-white">
-                                  {" "}
                                   ${row.original.salary}
                                 </p>
                               </div>
@@ -458,8 +491,14 @@ function DataTable({
           </table>
         </div>
       )}
-
-      <DataTablePagination table={table} />
+      <DataTablePagination
+        table={table}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
     </div>
   );
 }

@@ -50,7 +50,6 @@ function EditUserModal({ user, onClose, onSave }) {
       sm:p-6
     "
       >
-        {" "}
         {/* Header */}
         <div
           className="
@@ -89,7 +88,6 @@ function EditUserModal({ user, onClose, onSave }) {
           className="max-h-[70vh] space-y-4 overflow-y-auto pr-2"
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-            {" "}
             <Input
               label="First Name"
               name="first_name"

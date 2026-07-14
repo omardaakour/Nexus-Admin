@@ -43,7 +43,6 @@ function Dashboard() {
     p-6
   "
     >
-      {" "}
       {/* Header */}
       <div className="mb-8">
         <h1
@@ -78,7 +77,7 @@ function Dashboard() {
       {/* Charts */}
       <div className="mt-8 grid gap-6 xl:grid-cols-2">
         <UserGrowthChart data={data.growth} />
-        <DepartmentChart data={data.departments} />{" "}
+        <DepartmentChart data={data.departments} />
         <div className="mt-8">
           <RecentActivity data={data.recentActivity} />
         </div>

@@ -56,7 +56,6 @@ dark:hover:bg-gray-800
     shadow-lg
   "
         >
-          {" "}
           {columns.map((column) => (
             <label
               key={column.id}

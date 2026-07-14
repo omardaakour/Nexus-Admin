@@ -2,7 +2,6 @@ import { useSearchParams } from "react-router-dom";
 
 export function useTableParams() {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const search = searchParams.get("search") || "";
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
   const pageSize = parseInt(searchParams.get("pageSize") || "20", 10);
@@ -14,8 +13,19 @@ export function useTableParams() {
   const salaryMin = searchParams.get("salaryMin") || "";
   const salaryMax = searchParams.get("salaryMax") || "";
   const dateFrom = searchParams.get("dateFrom") || "";
-  const dateTo = searchParams.get("dateTo") || "";
 
+  const dateTo = searchParams.get("dateTo") || "";
+  const columns = searchParams.get("columns") || "";
+  function setColumns(value) {
+    setParams({
+      columns: value || undefined,
+    });
+  }
+  function setColumnVisibility(columns) {
+    setParams({
+      columns: columns || undefined,
+    });
+  }
   function setParams(updates) {
     const params = new URLSearchParams(searchParams);
     let shouldResetPage = false;
@@ -103,5 +113,8 @@ export function useTableParams() {
     setSorting,
     setFilters,
     clearFilters,
+    columns,
+    setColumnVisibility,
+    setColumns,
   };
 }

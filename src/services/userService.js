@@ -27,8 +27,10 @@ function buildQueryString(params) {
   return searchParams.toString();
 }
 
-export async function getUsers() {
-  const response = await fetch(`${API_URL}/users`);
+export async function getUsers(params = {}) {
+  const query = buildQueryString(params);
+
+  const response = await fetch(`${API_URL}/users?${query}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch users");

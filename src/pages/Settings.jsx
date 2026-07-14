@@ -15,7 +15,6 @@ function Settings() {
         </h1>
 
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {" "}
           Manage your account and application preferences.
         </p>
       </div>
@@ -33,7 +32,6 @@ function Settings() {
     shadow-sm
   "
       >
-        {" "}
         <h2
           className="
   mb-5
@@ -105,7 +103,6 @@ function Settings() {
     shadow-sm
   "
       >
-        {" "}
         <h2
           className="
   mb-5
@@ -137,7 +134,6 @@ dark:border-gray-800
               </p>
 
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {" "}
                 Receive updates and alerts.
               </p>
             </div>
@@ -187,7 +183,6 @@ dark:border-gray-800
               </p>
 
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {" "}
                 Change application appearance.
               </p>
             </div>
