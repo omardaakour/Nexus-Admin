@@ -3,31 +3,35 @@ import UserGrowthChart from "../components/dashboard/UserGrowthChart";
 import DepartmentChart from "../components/dashboard/DepartmentChart";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import RecentActivity from "../components/dashboard/RecentActivity";
+import { Users, UserCheck, UserX, DollarSign } from "lucide-react";
 function Dashboard() {
   const { data, isLoading } = useDashboardStats();
-
+  console.log(data);
   const stats = data
     ? [
         {
           title: "Total Users",
           ...data.stats.totalUsers,
+          icon: Users,
         },
 
         {
           title: "Active Users",
           ...data.stats.activeUsers,
+          icon: UserCheck,
         },
 
         {
           title: "Inactive Users",
           ...data.stats.inactiveUsers,
+          icon: UserX,
         },
 
         {
           title: "Average Salary",
           value: `$${data.stats.averageSalary.value}`,
-          icon: data.stats.averageSalary.icon,
           change: data.stats.averageSalary.change,
+          icon: DollarSign,
         },
       ]
     : [];

@@ -1,4 +1,3 @@
-export const API_URL = "https://nexus-admin-api-fplt.onrender.com";
 import axios from "axios";
 
 const api = axios.create({

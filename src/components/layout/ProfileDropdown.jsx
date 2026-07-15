@@ -1,9 +1,15 @@
 import { User, Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 function ProfileDropdown({ open }) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
   if (!open) return null;
 
   return (
@@ -94,6 +100,7 @@ function ProfileDropdown({ open }) {
       </button>
 
       <button
+        onClick={handleLogout}
         className="
           flex
           w-full
