@@ -1,13 +1,16 @@
 import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react";
 import { X } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function Sidebar({ open, setOpen }) {
+  const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
-
+  if (location.pathname === "/users") {
+    localStorage.setItem("usersLastRoute", location.pathname + location.search);
+  }
   function handleLogout() {
     logout();
     navigate("/login");
@@ -21,7 +24,7 @@ function Sidebar({ open, setOpen }) {
 
     {
       name: "Users",
-      path: "/users",
+      path: localStorage.getItem("usersLastRoute") || "/users",
       icon: Users,
     },
 
