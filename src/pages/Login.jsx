@@ -1,26 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import { loginUser } from "../services/authService";
+import { apiFetch } from "../services/api";
 function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    const success = login(email, password);
+    try {
+      setLoading(true);
 
-    if (success) {
+      const data = await loginUser(email, password);
+
+      login(data.user, data.token);
+
       navigate("/dashboard");
-    } else {
-      alert("Invalid credentials");
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
     }
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border p-6">
