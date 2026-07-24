@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 dotenv.config();
@@ -21,7 +20,6 @@ app.use(cookieParser());
 app.use(errorHandler);
 
 // Database
-connectDB();
 
 // Test route
 app.get("/", (req, res) => {
